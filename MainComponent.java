@@ -9,6 +9,7 @@ import javax.swing.Timer;
 import java.util.Stack;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
 import java.awt.event.ActionEvent;
@@ -25,9 +26,11 @@ public class MainComponent extends JComponent {
     private static final int SIDE_GAP = 75;
     private static final int THICKNESS = 3;
     private static final int STRING_ADJUST = 30;
+	
     
     //Instance Variabless
     private Rods rods;
+    private int cnt=0;
     
     /**
      * The constructor, it takes a Rods object as an input.
@@ -41,9 +44,12 @@ public class MainComponent extends JComponent {
      * Updates the graphics.
      */
     public void update() {
-        removeAll();
+    	for(int i=0;i<24;i++) {
+    	removeAll();
         revalidate();
         repaint();
+    	}
+        
     }
     
     /**
@@ -61,7 +67,7 @@ public class MainComponent extends JComponent {
      * The method that paints the component using a Graphics object.
      * @param g The graphics object.
      */
-    public void paintComponent(Graphics g) {
+    public void paintComponentAni(Graphics g) {
         paintRods(g);
         
         Rod[] rodArray =  rods.getRodArray();
@@ -76,6 +82,24 @@ public class MainComponent extends JComponent {
         g.drawString("start", X_START + SIDE_GAP - STRING_ADJUST / 2, Y_END + STRING_ADJUST);
         g.drawString("spare", X_START + SIDE_GAP + ROD_GAP - STRING_ADJUST / 2, Y_END + STRING_ADJUST);
         g.drawString("destination", X_END - SIDE_GAP - STRING_ADJUST, Y_END + STRING_ADJUST);
+    }
+    public void paintComponent(Graphics g) {
+        paintRods(g);
+        
+        Rod[] rodArray =  rods.getRodArray();
+        for (int i = 0; i < rodArray.length; i++) {
+            Stack<Disk> disksOnTop  = rodArray[i].getDisksOnTop();
+            for (int j = 0; j < disksOnTop.size(); j++) {
+            	if(j==disksOnTop.size()-1) paintDisk(disksOnTop.get(j), i, 1 + j, g);
+            	else paintDiskAni(disksOnTop.get(j), i, 1 + j, g,0);
+            }
+        } 
+        
+        g.setColor(Color.GRAY);
+        g.drawString("start", X_START + SIDE_GAP - STRING_ADJUST / 2, Y_END + STRING_ADJUST);
+        g.drawString("spare", X_START + SIDE_GAP + ROD_GAP - STRING_ADJUST / 2, Y_END + STRING_ADJUST);
+        g.drawString("destination", X_END - SIDE_GAP - STRING_ADJUST, Y_END + STRING_ADJUST);
+        cnt++;
     }
     
     /**
@@ -107,10 +131,19 @@ public class MainComponent extends JComponent {
         Graphics2D g2D = (Graphics2D) g;
         g2D.setStroke(new BasicStroke(THICKNESS - 1));
         g.setColor(Color.BLACK);
-        /*g.drawOval(X_START + SIDE_GAP + ROD_GAP * rodNumber - (diskSize * Disk.THICKNESS / 2), 
-        Y_END - Disk.THICKNESS * order, diskSize * Disk.THICKNESS, Disk.THICKNESS);*/
-        g.drawRect(X_START + SIDE_GAP + ROD_GAP * rodNumber - (diskSize * Disk.THICKNESS / 2),Y_END - Disk.THICKNESS * order, diskSize * Disk.THICKNESS, Disk.THICKNESS-1);
+        
+        g.drawRect(X_START + SIDE_GAP + ROD_GAP * rodNumber - ((2*diskSize-(diskSize-6)) * Disk.THICKNESS / 4),Y_END - Disk.THICKNESS * order, (2*diskSize-(diskSize-6)) * Disk.THICKNESS/2, Disk.THICKNESS-1);
         g.setColor(Color.ORANGE);
-        g.fillRect(X_START + SIDE_GAP + ROD_GAP * rodNumber - (diskSize * Disk.THICKNESS / 2), Y_END - Disk.THICKNESS * order, diskSize * Disk.THICKNESS, Disk.THICKNESS-1);
+        g.fillRect(X_START + SIDE_GAP + ROD_GAP * rodNumber - ((2*diskSize-(diskSize-6)) * Disk.THICKNESS / 4), Y_END - Disk.THICKNESS * order, (2*diskSize-(diskSize-6)) * Disk.THICKNESS/2, Disk.THICKNESS-1);
+    }
+    private void paintDiskAni(Disk toDraw, int rodNumber, int order, Graphics g, int y) {
+        int diskSize = toDraw.getSize();
+        Graphics2D g2D = (Graphics2D) g;
+        g2D.setStroke(new BasicStroke(THICKNESS - 1));
+        g.setColor(Color.BLACK);
+        
+        g.drawRect(X_START + SIDE_GAP + ROD_GAP * rodNumber - ((2*diskSize-(diskSize-6)) * Disk.THICKNESS / 4),Y_END - Disk.THICKNESS * (order+y), (2*diskSize-(diskSize-6)) * Disk.THICKNESS/2, Disk.THICKNESS-1);
+        g.setColor(Color.ORANGE);
+        g.fillRect(X_START + SIDE_GAP + ROD_GAP * rodNumber - ((2*diskSize-(diskSize-6)) * Disk.THICKNESS / 4), Y_END - Disk.THICKNESS * (order+y), (2*diskSize-(diskSize-6)) * Disk.THICKNESS/2, Disk.THICKNESS-1);
     }
 }

@@ -18,7 +18,7 @@ public class Rods {
     private LinkedList<Integer> movesToSolve;
     public String ntc;
     public Graphics grp;
-    
+    public static JEditorPane pane = new JEditorPane();
     
     /**
      * The constructor of the Rods class. Takes the disk number and the initial rod, the rod 
@@ -74,7 +74,40 @@ public class Rods {
      */
     public void moveDisk(int from, int destination) {
         Stack<Disk> fromStack = rodArray[from].getDisksOnTop();
-        ntc=cnt+". Move a disk"+" from rod "+ from + " to rod "+destination+"\n";
+        String a="Start",b="Start";
+        switch (from) {
+        case 0:
+        	{
+        		a=	"Start";
+        		break;
+        	}
+        case 1:{
+        	a="Spare";
+        	break;
+        	}
+        case 2:{
+        	a="Destination";
+        	break;
+        	}
+        }
+        switch (destination) {
+        case 0:
+        	{
+        		b=	"Start";
+        		break;
+        	}
+        case 1:{
+        	b="Spare";
+        	break;
+        	}
+        case 2:{
+        	b="Destination";
+        	break;
+        	}
+        }
+        
+        ntc=cnt+". Move a disk"+" from rod "+ a + " to rod "+b+"\n";
+        
         if (!fromStack.isEmpty()) {
         	
             rodArray[destination].getDisksOnTop().push(fromStack.pop());
